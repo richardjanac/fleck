@@ -84,7 +84,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-8 text-zinc-900">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 md:flex-row md:items-start">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 md:flex-row md:items-end">
         <section className="flex w-full flex-col md:w-2/5">
           <h1 className="mb-4 text-2xl font-semibold tracking-tight">
             Rezervácie Fleck v parku
