@@ -25,6 +25,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [calendarKey, setCalendarKey] = useState(0);
 
   const embedUrl =
     process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_EMBED_URL ??
@@ -54,6 +55,11 @@ export default function Home() {
 
       setMessage("Rezervácia bola vytvorená v Google kalendári.");
       setForm(initialForm);
+
+      // Reload kalendára po 2 sekundách, aby používateľ videl nový event
+      setTimeout(() => {
+        setCalendarKey((prev) => prev + 1);
+      }, 2000);
     } catch (err) {
       console.error(err);
       setError("Nepodarilo sa odoslať formulár.");
@@ -148,6 +154,7 @@ export default function Home() {
                 <input
                   type="time"
                   required
+                  step="600"
                   className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                   value={form.startTime}
                   onChange={(e) =>
@@ -162,6 +169,7 @@ export default function Home() {
                 <input
                   type="time"
                   required
+                  step="600"
                   className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                   value={form.endTime}
                   onChange={(e) =>
@@ -185,24 +193,27 @@ export default function Home() {
               />
             </div>
 
-            {message && (
-              <p className="text-sm text-emerald-600">{message}</p>
-            )}
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            <div className="mt-auto space-y-2">
+              {message && (
+                <p className="text-sm text-emerald-600">{message}</p>
+              )}
+              {error && <p className="text-sm text-red-600">{error}</p>}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
-            >
-              {loading ? "Ukladám..." : "Vytvoriť rezerváciu"}
-            </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
+              >
+                {loading ? "Ukladám..." : "Vytvoriť rezerváciu"}
+              </button>
+            </div>
           </form>
         </section>
 
-        <section className="flex w-full md:w-3/5">
-          <div className="w-full overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+        <section className="flex w-full flex-col md:w-3/5">
+          <div className="flex flex-1 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
             <iframe
+              key={calendarKey}
               src={embedUrl}
               className="h-[720px] w-full border-0 md:h-[820px]"
               loading="lazy"
