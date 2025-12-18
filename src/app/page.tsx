@@ -31,6 +31,16 @@ export default function Home() {
     process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_EMBED_URL ??
     "https://calendar.google.com";
 
+  // Zaokrúhli čas na 10 minút
+  function roundTo10Minutes(time: string): string {
+    if (!time) return time;
+    const [hours, minutes] = time.split(":").map(Number);
+    const roundedMinutes = Math.round(minutes / 10) * 10;
+    const finalMinutes = roundedMinutes >= 60 ? 0 : roundedMinutes;
+    const finalHours = roundedMinutes >= 60 ? hours + 1 : hours;
+    return `${String(finalHours).padStart(2, "0")}:${String(finalMinutes).padStart(2, "0")}`;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -70,7 +80,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-8 text-zinc-900">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 md:flex-row md:items-stretch">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 md:flex-row md:items-start">
         <section className="flex w-full flex-col md:w-2/5">
           <h1 className="mb-4 text-2xl font-semibold tracking-tight">
             Rezervácie Fleck v parku
@@ -82,7 +92,7 @@ export default function Home() {
 
           <form
             onSubmit={handleSubmit}
-            className="flex min-h-[720px] flex-1 flex-col space-y-4 rounded-xl bg-white p-4 shadow-sm md:min-h-[820px]"
+            className="flex h-[720px] flex-col space-y-4 rounded-xl bg-white p-4 shadow-sm md:h-[820px]"
           >
             <div>
               <label className="mb-1 block text-sm font-medium">
@@ -157,9 +167,10 @@ export default function Home() {
                   step="600"
                   className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                   value={form.startTime}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, startTime: e.target.value }))
-                  }
+                  onChange={(e) => {
+                    const rounded = roundTo10Minutes(e.target.value);
+                    setForm((f) => ({ ...f, startTime: rounded }));
+                  }}
                 />
               </div>
               <div className="flex-1">
@@ -172,9 +183,10 @@ export default function Home() {
                   step="600"
                   className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                   value={form.endTime}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, endTime: e.target.value }))
-                  }
+                  onChange={(e) => {
+                    const rounded = roundTo10Minutes(e.target.value);
+                    setForm((f) => ({ ...f, endTime: rounded }));
+                  }}
                 />
               </div>
             </div>
@@ -211,11 +223,11 @@ export default function Home() {
         </section>
 
         <section className="flex w-full flex-col md:w-3/5">
-          <div className="flex flex-1 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+          <div className="h-[720px] w-full overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm md:h-[820px]">
             <iframe
               key={calendarKey}
               src={embedUrl}
-              className="h-[720px] w-full border-0 md:h-[820px]"
+              className="h-full w-full border-0"
               loading="lazy"
             />
           </div>
