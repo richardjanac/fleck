@@ -31,15 +31,19 @@ export default function Home() {
     process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_EMBED_URL ??
     "https://calendar.google.com";
 
-  // Zaokrúhli čas na 10 minút
-  function roundTo10Minutes(time: string): string {
-    if (!time) return time;
+  // Helper funkcie pre time picker
+  function parseTime(time: string): { hours: number; minutes: number } {
+    if (!time) return { hours: 0, minutes: 0 };
     const [hours, minutes] = time.split(":").map(Number);
-    const roundedMinutes = Math.round(minutes / 10) * 10;
-    const finalMinutes = roundedMinutes >= 60 ? 0 : roundedMinutes;
-    const finalHours = roundedMinutes >= 60 ? hours + 1 : hours;
-    return `${String(finalHours).padStart(2, "0")}:${String(finalMinutes).padStart(2, "0")}`;
+    return { hours: hours || 0, minutes: minutes || 0 };
   }
+
+  function formatTime(hours: number, minutes: number): string {
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  }
+
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+  const minutes = [0, 10, 20, 30, 40, 50];
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -161,33 +165,89 @@ export default function Home() {
                 <label className="mb-1 block text-sm font-medium">
                   Začiatok
                 </label>
-                <input
-                  type="time"
-                  required
-                  step="600"
-                  className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
-                  value={form.startTime}
-                  onChange={(e) => {
-                    const rounded = roundTo10Minutes(e.target.value);
-                    setForm((f) => ({ ...f, startTime: rounded }));
-                  }}
-                />
+                <div className="flex gap-2">
+                  <select
+                    required
+                    className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+                    value={parseTime(form.startTime).hours}
+                    onChange={(e) => {
+                      const { minutes } = parseTime(form.startTime);
+                      setForm((f) => ({
+                        ...f,
+                        startTime: formatTime(Number(e.target.value), minutes),
+                      }));
+                    }}
+                  >
+                    {hours.map((h) => (
+                      <option key={h} value={h}>
+                        {String(h).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="flex items-center text-sm text-zinc-500">:</span>
+                  <select
+                    required
+                    className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+                    value={parseTime(form.startTime).minutes}
+                    onChange={(e) => {
+                      const { hours } = parseTime(form.startTime);
+                      setForm((f) => ({
+                        ...f,
+                        startTime: formatTime(hours, Number(e.target.value)),
+                      }));
+                    }}
+                  >
+                    {minutes.map((m) => (
+                      <option key={m} value={m}>
+                        {String(m).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="flex-1">
                 <label className="mb-1 block text-sm font-medium">
                   Koniec
                 </label>
-                <input
-                  type="time"
-                  required
-                  step="600"
-                  className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
-                  value={form.endTime}
-                  onChange={(e) => {
-                    const rounded = roundTo10Minutes(e.target.value);
-                    setForm((f) => ({ ...f, endTime: rounded }));
-                  }}
-                />
+                <div className="flex gap-2">
+                  <select
+                    required
+                    className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+                    value={parseTime(form.endTime).hours}
+                    onChange={(e) => {
+                      const { minutes } = parseTime(form.endTime);
+                      setForm((f) => ({
+                        ...f,
+                        endTime: formatTime(Number(e.target.value), minutes),
+                      }));
+                    }}
+                  >
+                    {hours.map((h) => (
+                      <option key={h} value={h}>
+                        {String(h).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="flex items-center text-sm text-zinc-500">:</span>
+                  <select
+                    required
+                    className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+                    value={parseTime(form.endTime).minutes}
+                    onChange={(e) => {
+                      const { hours } = parseTime(form.endTime);
+                      setForm((f) => ({
+                        ...f,
+                        endTime: formatTime(hours, Number(e.target.value)),
+                      }));
+                    }}
+                  >
+                    {minutes.map((m) => (
+                      <option key={m} value={m}>
+                        {String(m).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 
