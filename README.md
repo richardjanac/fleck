@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Jednoduchý rezervačný kalendár pre Fleck coworking (Call room, Meeting room).
 
-## Getting Started
+## Lokálny štart
 
-First, run the development server:
+### Požiadavky
+
+- Node.js 22+
+
+### Setup
+
+1. Nastav si env:
+
+```bash
+export DATABASE_URL="file:./dev.db"
+export ADMIN_TOKEN="change-me"
+```
+
+2. Migrácie + seed:
+
+```bash
+npm run db:migrate
+npm run db:seed
+```
+
+3. Dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Otvor `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy na Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Áno, funguje to veľmi dobre, len **neodporúčam SQLite na produkcii** (filesystem v serverless nie je perzistentný).
 
-## Learn More
+### Odporúčanie pre produkciu
 
-To learn more about Next.js, take a look at the following resources:
+- **Postgres** (Vercel Postgres / Neon / Supabase) a `DATABASE_URL` nastavíš na Postgres connection string.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Env premenné na Verceli
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `DATABASE_URL`
+- `ADMIN_TOKEN`
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pozn.: v ďalšom kroku doplníme API + ICS feed, aby sa kalendár dal pridať do Google Calendar a Home Assistanta.
