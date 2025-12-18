@@ -15,6 +15,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Fleck Calendar",
   description: "Rezervácie Fleck v parku - Call room a Meeting room",
+  openGraph: {
+    title: "Fleck Calendar",
+    description: "Rezervácie Fleck v parku - Call room a Meeting room",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Fleck Calendar",
+    description: "Rezervácie Fleck v parku - Call room a Meeting room",
+  },
 };
 
 export default function RootLayout({
